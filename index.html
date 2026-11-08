@@ -123,7 +123,7 @@ img#logoPrev{max-height:60px;display:block;margin:6px 0}
   .pf th{font-weight:700}
   .pf td{color:#0a2a8a}
   .pf .comp{font-weight:700;text-decoration:underline;margin-top:5mm}
-  .pf .grad{text-align:center;font-weight:700;margin-top:8mm}
+  .pf .grad{text-align:center;font-weight:700;margin-top:8mm;margin-bottom:4mm}
   .pf .sigimg{height:24mm}
   .pf .foot{font-size:8pt;color:#666;margin-top:6mm;text-align:right}
 }
@@ -660,7 +660,7 @@ function printOcs(L){
     <div class="comp">COMPARÊNCIAS</div>
     ${ln('QUARTEL:',o.compQuartel)}${ln('LOCAL:',o.compLocal)}
     <div class="grad">O GRADUADO DA OCORRÊNCIA</div>
-    <div class="ln"><span class="k">Nº MEC.:</span><span class="v sm" style="flex:0 0 32mm">${esc(o.nMec)}</span><span class="k">ASSINATURA:</span><span class="v" style="border:0;border-bottom:1px solid #000">${o.assinatura?`<img class="sigimg" src="${o.assinatura}">`:''}</span></div>
+    <div class="ln"><span class="k">Nº MEC.:</span><span class="v sm" style="flex:0 0 32mm">${esc(o.nMec)}</span><span class="k">ASSINATURA:</span><span class="v" style="border:0;border-bottom:1px solid #000;text-align:right">${o.assinatura?`<img class="sigimg" src="${o.assinatura}">`:''}</span></div>
     ${o.gradNome?`<div style="text-align:right;font-size:9.5pt;margin-top:1mm">${esc(o.gradNome)}</div>`:''}
     <div class="foot">${o.fechada?'Ficha fechada em '+new Date(o.fechadaEm).toLocaleString('pt-PT'):'Rascunho / não fechada'}</div>
     ${(o._fotos||[]).map((f,i)=>`<div style="page-break-before:always;text-align:center"><div style="font-weight:700;text-align:left;margin-bottom:3mm">Anexo ${i+1} — Ocorrência Nº ${esc(o.nInterno||o.nCoord||'')}</div><img src="${f.data}" style="max-width:100%;max-height:245mm"></div>`).join('')}
@@ -705,34 +705,34 @@ async function buildPDF(o,fotos){
   const P=new MiniPDF().page(),M=48,R=P.W-M,BLUE='0.04 0.16 0.54',BOT=P.H-50;let y=40;
   const need=h=>{if(y+h>BOT){P.page();y=50}};
   const logo=await toJpeg(C.logo||LOGO_AHBVF);
-  if(logo){const lh=70,lw=lh*logo.w/logo.h;P.draw(P.img(logo),(P.W-lw)/2,y,lw,lh);y+=lh+16}
+  if(logo){const lh=58,lw=lh*logo.w/logo.h;P.draw(P.img(logo),(P.W-lw)/2,y,lw,lh);y+=lh+14}
   const ctr=(s,size,b=true)=>P.text((P.W-tw(s,size,b))/2,y,s,size,b);
-  ctr('ASSOCIAÇÃO HUMANITÁRIA DE BOMBEIROS VOLUNTÁRIOS DO FAIAL',12);y+=16;ctr('- OCORRÊNCIAS -',11);y+=30;
+  ctr('ASSOCIAÇÃO HUMANITÁRIA DE BOMBEIROS VOLUNTÁRIOS DO FAIAL',12);y+=16;ctr('- OCORRÊNCIAS -',11);y+=26;
   const fld=(lab,val,x,w)=>{P.text(x,y,lab,10,true);const lx=x+tw(lab,10,true)+4;P.line(lx,y+3,x+w,y+3);P.text(lx+2,y-1,val,10.5,false,BLUE)};
   const hh=t=>t?t.replace(':','H'):'';
-  fld('Nº COORDENAÇÃO:',o.nCoord,M,250);fld('Nº INTERNO:',o.nInterno,320,R-320);y+=24;
-  fld('SINISTRO:',o.sinistro,M,330);fld('DATA:',fmtD(o.data),395,R-395);y+=24;
-  fld('PEDIDO FEITO:',o.pedido,M,240);fld('ALERTA:',hh(o.hAlerta),300,115);fld('SAÍDA:',hh(o.hSaida),430,R-430);y+=24;
-  fld('LOCAL:',hh(o.hLocal),M,120);fld('REGRESSO:',hh(o.hRegresso),185,130);P.text(330,y,'Duração: '+hm(mins(o.hAlerta,o.hRegresso)),9);y+=24;
-  fld('LOCAL/RUA:',o.rua,M,300);fld('FREGUESIA:',o.freguesia,360,R-360);y+=24;
-  fld('PROPRIETÁRIO/INQUILINO:',o.proprietario,M,R-M);y+=24;
+  fld('Nº COORDENAÇÃO:',o.nCoord,M,250);fld('Nº INTERNO:',o.nInterno,320,R-320);y+=22;
+  fld('SINISTRO:',o.sinistro,M,330);fld('DATA:',fmtD(o.data),395,R-395);y+=22;
+  fld('PEDIDO FEITO:',o.pedido,M,240);fld('ALERTA:',hh(o.hAlerta),300,115);fld('SAÍDA:',hh(o.hSaida),430,R-430);y+=22;
+  fld('LOCAL:',hh(o.hLocal),M,120);fld('REGRESSO:',hh(o.hRegresso),185,130);P.text(330,y,'Duração: '+hm(mins(o.hAlerta,o.hRegresso)),9);y+=22;
+  fld('LOCAL/RUA:',o.rua,M,300);fld('FREGUESIA:',o.freguesia,360,R-360);y+=22;
+  fld('PROPRIETÁRIO/INQUILINO:',o.proprietario,M,R-M);y+=22;
   const multi=(lab,val,minL=1)=>{need(24);P.text(M,y,lab,10,true);const lx=M+tw(lab,10,true)+4;
     let ls=wrap(val,R-lx-4,10.5);if(!val)ls=[''];while(ls.length<minL)ls.push('');
-    ls.forEach((l,i)=>{need(20);const x0=i?M:lx;P.line(x0,y+3,R,y+3);P.text(x0+2,y-1,l,10.5,false,BLUE);y+=20});y+=4};
+    ls.forEach((l,i)=>{need(19);const x0=i?M:lx;P.line(x0,y+3,R,y+3);P.text(x0+2,y-1,l,10.5,false,BLUE);y+=19});y+=3};
   multi('DESCRIÇÃO:',o.descricao,2);multi('CAUSAS:',o.causas);multi('PREJUÍZOS:',o.prejuizos);multi('EQUIPAMENTO UTILIZADO:',o.equipamento);
   // tabela
   const cw=[95,50,60,75,R-M-280],hd=['VIATURA',"KM'S",'CHEFE','CONDUTOR','GUARNIÇÃO'];
   const V=[...(o.viaturas||[])];while(V.length<6)V.push({});
   need(40);y+=6;let x=M;P.rect(M,y,R-M,20);hd.forEach((t,i)=>{P.text(x+(cw[i]-tw(t,9.5,true))/2,y+14,t,9.5,true);x+=cw[i]});y+=20;
-  V.forEach(v=>{const g=wrap(splitG(v.guarnicao).join(' – '),cw[4]-8,10);const rh=Math.max(20,g.length*13+7);need(rh);
-    let x=M;P.rect(M,y,R-M,rh);[v.viatura,v.kms,v.chefe,v.condutor].forEach((t,i)=>{P.text(x+4,y+14,t||'',10,false,BLUE);x+=cw[i]});
-    g.forEach((l,i)=>P.text(x+4,y+14+i*13,l,10,false,BLUE));
+  V.forEach(v=>{const g=wrap(splitG(v.guarnicao).join(' – '),cw[4]-8,10);const rh=Math.max(18,g.length*13+5);need(rh);
+    let x=M;P.rect(M,y,R-M,rh);[v.viatura,v.kms,v.chefe,v.condutor].forEach((t,i)=>{P.text(x+4,y+13,t||'',10,false,BLUE);x+=cw[i]});
+    g.forEach((l,i)=>P.text(x+4,y+13+i*13,l,10,false,BLUE));
     let cx=M;cw.slice(0,4).forEach(w=>{cx+=w;P.line(cx,y,cx,y+rh,.8)});y+=rh});
-  y+=26;need(70);P.text(M,y,'COMPARÊNCIAS',10,true);P.line(M,y+2,M+tw('COMPARÊNCIAS',10,true),y+2,.7);y+=22;
-  fld('QUARTEL:',o.compQuartel,M,R-M);y+=22;fld('LOCAL:',o.compLocal,M,R-M);y+=34;
-  need(80);ctr('O GRADUADO DA OCORRÊNCIA',10.5);y+=48;
-  fld('Nº MEC.:',o.nMec,M,190);P.text(250,y,'ASSINATURA:',10,true);const sx=250+tw('ASSINATURA:',10,true)+4;P.line(sx,y+3,R,y+3);
-  if(o.assinatura){const s=await toJpeg(o.assinatura);if(s){const sh=62,sw=Math.min(R-sx-4,sh*s.w/s.h);P.draw(P.img(s),sx+4,y-sh+2,sw,sw*s.h/s.w)}}
+  y+=22;need(70);P.text(M,y,'COMPARÊNCIAS',10,true);P.line(M,y+2,M+tw('COMPARÊNCIAS',10,true),y+2,.7);y+=22;
+  fld('QUARTEL:',o.compQuartel,M,R-M);y+=21;fld('LOCAL:',o.compLocal,M,R-M);y+=26;
+  need(96);ctr('O GRADUADO DA OCORRÊNCIA',10.5);y+=72;
+  fld('Nº MEC.:',o.nMec,M,180);P.text(240,y,'ASSINATURA:',10,true);const sx=240+tw('ASSINATURA:',10,true)+4;P.line(sx,y+3,R,y+3);
+  if(o.assinatura){const s=await toJpeg(o.assinatura);if(s){let sh=62,sw=sh*s.w/s.h;if(sw>R-sx-4){sw=R-sx-4;sh=sw*s.h/s.w}P.draw(P.img(s),R-sw,y-sh+2,sw,sh)}}
   if(o.gradNome){y+=16;P.text(R-tw(o.gradNome,9),y,o.gradNome,9)}
   P.text(M,P.H-28,`${o.fechada?'Ficha fechada em '+new Date(o.fechadaEm).toLocaleString('pt-PT'):'Ficha não fechada'} · ${fotos.length} fotografia(s) anexa(s) · gerado em ${new Date().toLocaleString('pt-PT')}`,7.5,false,'0.4 0.4 0.4');
   fotos.forEach((f,i)=>{P.page();P.text(M,40,`Anexo ${i+1}/${fotos.length} — Ocorrência Nº ${o.nInterno||o.nCoord||''} — ${fmtD(o.data)}`,10,true);
