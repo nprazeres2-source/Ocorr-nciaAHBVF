@@ -43,7 +43,7 @@ table.vt input{padding:7px 6px;font-size:15px}
 .dur{font-size:13px;color:var(--mut);margin-top:8px}
 .dur b{color:var(--ink)}
 .sig-wrap{border:1px dashed var(--mut);border-radius:8px;background:#fff;position:relative;touch-action:none}
-canvas#sig{width:100%;height:150px;display:block}
+canvas#sig{width:100%;height:260px;display:block}
 .sig-wrap span{position:absolute;left:10px;bottom:6px;font-size:11px;color:#bbb;pointer-events:none}
 .list .item{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;display:flex;gap:10px;align-items:center;cursor:pointer}
 .list .item .n{font-weight:800;color:var(--red);min-width:62px}
@@ -124,7 +124,7 @@ img#logoPrev{max-height:60px;display:block;margin:6px 0}
   .pf td{color:#0a2a8a}
   .pf .comp{font-weight:700;text-decoration:underline;margin-top:5mm}
   .pf .grad{text-align:center;font-weight:700;margin-top:8mm}
-  .pf .sigimg{height:18mm}
+  .pf .sigimg{height:24mm}
   .pf .foot{font-size:8pt;color:#666;margin-top:6mm;text-align:right}
 }
 </style>
@@ -732,7 +732,7 @@ async function buildPDF(o,fotos){
   fld('QUARTEL:',o.compQuartel,M,R-M);y+=22;fld('LOCAL:',o.compLocal,M,R-M);y+=34;
   need(80);ctr('O GRADUADO DA OCORRÊNCIA',10.5);y+=48;
   fld('Nº MEC.:',o.nMec,M,190);P.text(250,y,'ASSINATURA:',10,true);const sx=250+tw('ASSINATURA:',10,true)+4;P.line(sx,y+3,R,y+3);
-  if(o.assinatura){const s=await toJpeg(o.assinatura);if(s){const sh=48,sw=Math.min(R-sx-4,sh*s.w/s.h);P.draw(P.img(s),sx+4,y-sh+2,sw,sw*s.h/s.w)}}
+  if(o.assinatura){const s=await toJpeg(o.assinatura);if(s){const sh=62,sw=Math.min(R-sx-4,sh*s.w/s.h);P.draw(P.img(s),sx+4,y-sh+2,sw,sw*s.h/s.w)}}
   if(o.gradNome){y+=16;P.text(R-tw(o.gradNome,9),y,o.gradNome,9)}
   P.text(M,P.H-28,`${o.fechada?'Ficha fechada em '+new Date(o.fechadaEm).toLocaleString('pt-PT'):'Ficha não fechada'} · ${fotos.length} fotografia(s) anexa(s) · gerado em ${new Date().toLocaleString('pt-PT')}`,7.5,false,'0.4 0.4 0.4');
   fotos.forEach((f,i)=>{P.page();P.text(M,40,`Anexo ${i+1}/${fotos.length} — Ocorrência Nº ${o.nInterno||o.nCoord||''} — ${fmtD(o.data)}`,10,true);
